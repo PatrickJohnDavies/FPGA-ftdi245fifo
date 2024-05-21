@@ -3,6 +3,7 @@
 
 
 import sys
+from ftd3xx.defines import *
 
 
 
@@ -236,6 +237,10 @@ class USB_FTX232H_FT60X_sync245mode():
                 ei = min(ei, recv_len)
                 
                 rxlen_once = self._usb.readPipe(0x82, chunk, ei-si)      # try to read (ei-si) bytes
+                usb_status = self._usb.getLastError()
+                if usb_status == FT_TIMEOUT:
+                    print('read timeout. aborting pipe.')
+                    self._usb.abortPipe(0x82)
                 
                 si += rxlen_once
                 
